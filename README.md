@@ -7,4 +7,4 @@ This example outlines how to start a project, pull down a list of Locations usin
 
 Push Notifications
 ------------------
-This article outlines how to develop an iOS app to receive push notifications with the Moblico SDK for iOS.
+This example outlines how to develop an iOS app to receive push notifications with the Moblico SDK for iOS.

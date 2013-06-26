@@ -1,25 +1,22 @@
-Getting Locations using the Moblico SDK for iOS
-===============================================
+#Getting Locations using the Moblico SDK for iOS
 
 This article outlines how to start a project, pull down a list of Locations using the Moblico SDK, and display them to the screen.
 
-Prerequisets
-------------
+## Prerequisets
 
 Before you can begin:
 
 1. Login to the Dev Portal: [moblico.net/developer](https://moblico.net/developer)
 2. Retrieve your API Key for future use.
 
-	_For more information review the [Dev Portal tutorials](http://developer.moblico.com/tutorials.php#playlist=PLjpfC9HFMZgU3bIvvS6wE0uIJUhCtQqZN)._
+	_For more information review the [Dev Portal tutorials][devPortalTutorials]._
 3. Switch to the Admin Portal: [moblico.net/admin](https://moblico.net/admin)
 4. Navigate to the Locations module, and add a few Locations to get started.
 
-	_For more information review the [Admin Portal tutorials](http://developer.moblico.com/tutorials.php#playlist=PLjpfC9HFMZgV\_lqfNFVcy4pZkKVSIFp0f)._
+	_For more information review the [Admin Portal tutorials][adminPortalTutorials]._
 
 
-Begin
------
+## Begin
 
 1. Create a new Xcode Project, or open an existing project (_This example uses storyboards_).
 2. Add MoblicoSDK and Security frameworks.
@@ -98,3 +95,11 @@ Begin
 			cell.textLabel.text = [location name];
 		    return cell;
 		}
+
+
+## Download
+
+Download the Locations example source code: [Locations.zip](http://developer.moblico.com/sdks/ios/samplecode/Locations.zip)
+
+[devPortalTutorials]: http://developer.moblico.com/tutorials.php#playlist=PLjpfC9HFMZgU3bIvvS6wE0uIJUhCtQqZN
+[adminPortalTutorials]: http://developer.moblico.com/tutorials.php#playlist=PLjpfC9HFMZgV\_lqfNFVcy4pZkKVSIFp0f

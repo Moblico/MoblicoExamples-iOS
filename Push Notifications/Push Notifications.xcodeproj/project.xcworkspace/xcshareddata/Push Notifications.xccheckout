@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>AAE42CCE-BC80-482D-8CE7-CBBB04DC036A</string>
+	<key>IDESourceControlProjectName</key>
+	<string>Push Notifications</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>12E12B28-2BE0-4856-9BE3-84F7D0B0517E</key>
+		<string>https://github.com/Moblico/MoblicoExamples-iOS.git</string>
+		<key>D622BEE5-EB73-48FD-9CA8-F84A1F329E5C</key>
+		<string>https://github.com/Moblico/MoblicoSDK-iOS.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>Push Notifications/Push Notifications.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>12E12B28-2BE0-4856-9BE3-84F7D0B0517E</key>
+		<string>../../..</string>
+		<key>D622BEE5-EB73-48FD-9CA8-F84A1F329E5C</key>
+		<string>../../../../MoblicoFrameworks/MoblicoSDK</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/Moblico/MoblicoExamples-iOS.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>12E12B28-2BE0-4856-9BE3-84F7D0B0517E</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D622BEE5-EB73-48FD-9CA8-F84A1F329E5C</string>
+			<key>IDESourceControlWCCName</key>
+			<string>MoblicoSDK</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>12E12B28-2BE0-4856-9BE3-84F7D0B0517E</string>
+			<key>IDESourceControlWCCName</key>
+			<string>Examples</string>
+		</dict>
+	</array>
+</dict>
+</plist>

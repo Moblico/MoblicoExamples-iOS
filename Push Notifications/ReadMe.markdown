@@ -1,6 +1,8 @@
-# Push Notifications Example
+# Push Notifications Example (with Groups)
 
-This article outlines how to develop an iOS app to receive push notifications with the Moblico SDK for iOS. Review step 1 of the [Moblico Push Notifications Guide][PushGuide] for information or setting up your account with Push Notifications.
+Moblico uses a user based authentication scheme. In order to send push notifications to a device, you must first assign the device to a user. Push Notifications can also be sent to all user in a group. The SDK provides services for creating users registering devices, and adding users to groups. Additionally, you can use the SDK to automatically create a user when registering a device.
+
+This article outlines how to develop an iOS app to receive push notifications, and manage groups with the Moblico SDK for iOS. Review step 1 of the [Moblico Push Notifications Guide][PushGuide] for information or setting up your account with Push Notifications.
 
 ## Beginning with the Moblico SDK
 
@@ -8,7 +10,7 @@ This article outlines how to develop an iOS app to receive push notifications wi
 2. Add MoblicoSDK and Security frameworks.
 
 	_For more information see the [Getting Started Guide](http://developer.moblico.com/sdks/ios/docs/)_
-3. Configure the MLCServiceManager during `-application:didFinishLaunchingWithOptions:`
+3. Configure the MLCServiceManager during `- application:didFinishLaunchingWithOptions:`
 
 		- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 			// Enter your Moblico API key here
@@ -19,88 +21,23 @@ This article outlines how to develop an iOS app to receive push notifications wi
 
 ## Register Device
 
-Moblico uses a user based authentication scheme. In order to send push notifications to a device, you must first assign the device to a user.
-
-This example will automatically generate a user, but you might want to provide login/registration forms in your app.
+This example uses the `- [MLCUsersService createAnonymousDeviceWithDeviceToken:handler:]` method to automatically generate an anonymous user and assign the Apple Push Notification device token to that user.
 
 Follow these steps to register your device with Moblico:
 
-1. Generate a unique identifier to use as a username
+1. Register with Apple to receive push notifications
 
-		- (NSString *)generateUniqueIdentifier {
-		  // On iOS 6 use identifierForVerder
-		  if ([[UIDevice currentDevice] respondsToSelector:@selector(identifierForVendor)]) {
-		    return [[[UIDevice currentDevice] identifierForVendor] UUIDString];
-		  }
-		
-		  // Gernerate a UUID on iOS 5
-		  NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-		  NSString *deviceUUID = [defaults stringForKey:@"deviceUUID"];
-		  if (!deviceUUID) {
-		    deviceUUID = CFBridgingRelease(CFUUIDCreateString(kCFAllocatorDefault, CFUUIDCreate(kCFAllocatorDefault)));
-		    [defaults setObject:deviceUUID forKey:@"deviceUUID"];
-		  }
-		
-		  return deviceUUID;
-		}
+		// Register with Apple for notifications
+		UIRemoteNotificationType types = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert;
+		[[UIApplication sharedApplication] registerForRemoteNotificationTypes:types];
 
-2. Verify if the user exists on the Moblico platform or automatically create the user
+2. Handle receiving the device token from Apple.
 
-		- (void)verifyOrCreateUserWithUsername:(NSString *)username {
-		  // Create a transient user object to pass to the moblico platform
-		  MLCUser * user = [MLCUser userWithUsername:username];
-		
-		  // This block of code will create a user, it will not execute until you call [createUserService start]
-		  MLCUsersService *createUserService = [MLCUsersService createUser:user handler:^(MLCStatus *status, NSError *error, NSHTTPURLResponse *response) {
-		    if (response.statusCode == 200) {
-		      // User was succesfully created
-		      NSLog(@"Created User: %@", user);
-		      [self loginWithUser:user];
-		    }
-		    else {
-		      // User was not created
-		      NSLog(@"Unable to create user.\nstatus: %@ error: %@ response: %@", status, error, response);
-		    }
-		  }];
-
-		  // This block of code determines if the user already exists, it will not execute until you call [verifyUserService start]
-		  MLCUsersService *verifyUserService = [MLCUsersService verifyExistingUserWithUsername:user.username handler:^(id<MLCEntityProtocol> resource, NSError *error, NSHTTPURLResponse *response) {
-		    if (response.statusCode == 200) {
-		      NSLog(@"User exists, registering device.");
-		      [self loginWithUser:user];
-		    }
-		    else if (response.statusCode == 404) {
-		      NSLog(@"User not found. Creating User");
-		      [createUserService start];
-		    }
-		    else {
-		      NSLog(@"Unable to verify user.\nresource: %@ error: %@ response: %@", resource, error, response);
-		    }
-		  }];
-	
-		  // Execute
-		  [verifyUserService start];
-		}
-
-3. Pass the user's authentication credentials to MLCServiceManager, and register with Apple to receive push notifications
-
-		- (void)loginWithUser:(MLCUser *)user {
-		  // Pass the username to MLCServiceManager to create a user level authentication
-		  // Password is blank since we are using auto registration.
-		  [[MLCServiceManager sharedServiceManager] setUsername:user.username password:nil remember:NO];
-		
-		  // Register with apple
-		  UIRemoteNotificationType types = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert;
-		  [[UIApplication sharedApplication] registerForRemoteNotificationTypes:types];
-		}
-
-4. Handle receiving the device token from apple.
-
+		// Got deviceToken from Apple's Push Notification service.
 		- (void)application:(UIApplication*)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken {
-			// Get the currently logged in user
-			MLCUser * user = [[MLCServiceManager sharedServiceManager] currentUser];
+		
 			// Send the device token to Moblico
-			MLCUsersService *updateDeviceService = [MLCUsersService updateDeviceWithDeviceToken:deviceToken forUser:user handler:^(MLCStatus *status, NSError *error, NSHTTPURLResponse *response) {
+			MLCUsersService *createAnonymousDeviceService = [MLCUsersService createAnonymousDeviceWithDeviceToken:deviceToken handler:^(MLCStatus *status, NSError *error, NSHTTPURLResponse *response) {
 				if (response.statusCode == 200) {
 					NSLog(@"Registered Device Token: %@", deviceToken);
 				}
@@ -108,10 +45,10 @@ Follow these steps to register your device with Moblico:
 					NSLog(@"Unable to register Device.\nstatus: %@ error: %@ response: %@", status, error, response);
 				}
 			}];
-			[updateDeviceService start];
+			[createAnonymousDeviceService start];
 		}
 
-5. You should now see your user in the Moblico Admin portal.
+3. You should now see your user in the Moblico Admin portal.
 
 	*See step 2 of the [Moblico Push Notifications Guide][PushGuide] for more information.*
 
@@ -136,6 +73,49 @@ Push notifications can enter your app in one of two ways.
 		}
 
 *For more information on sending Push Notifications see step 3 of the [Moblico Push Notifications Guide][PushGuide].*
+
+## Managing Groups
+
+To see a list of all of the existing groups call `- [MLCGroupsService listGroups:]`
+
+	MLCGroupsService *service = [MLCGroupsService listGroups:^(NSArray *collection, NSError *error, NSHTTPURLResponse *response) {
+		[self.tableView beginUpdates];
+		self.groups = collection;
+		[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:0] withRowAnimation:UITableViewRowAnimationAutomatic];
+		[self.tableView endUpdates];
+	}];
+	
+	[service start];
+
+To see the current user's groups call `- [MLCGroupsService listGroupsForUser:handler:]`
+
+	MLCUser *user = [MLCServiceManager sharedServiceManager].currentUser;
+	if (user) {
+		MLCGroupsService *service = [MLCGroupsService listGroupsForUser:user handler:^(NSArray *collection, NSError *error, NSHTTPURLResponse *response) {
+			[self.tableView beginUpdates];
+			self.userGroups = collection;
+			[self.tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationAutomatic];
+			[self.tableView endUpdates];
+		}];
+		[service start];
+	}
+
+To add the current user to a (`MLCGroup`) group call `- [MLCGroupsService addUser:toGroup:handler:]`
+
+		MLCGroup *group = self.groups[indexPath.row];
+		MLCUser *user = [MLCServiceManager sharedServiceManager].currentUser;
+		if (user) {
+			MLCGroupsService *service = [MLCGroupsService addUser:user toGroup:group handler:^(MLCStatus *status, NSError *error, NSHTTPURLResponse *response) {
+				if (status && status.type == MLCStatusTypeSuccess) {
+					NSLog(@"Added user: %@ to group: %@", user, group);
+				}
+				else {
+					NSLog(@"Failed to add user: %@ to group: %@ with error: %@", user, group, error);
+				}
+			}];
+			[service start];
+		}
+
 
 ## Download
 

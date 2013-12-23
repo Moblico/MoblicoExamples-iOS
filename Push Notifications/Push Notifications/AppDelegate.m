@@ -50,24 +50,7 @@
 	// Send the device token to Moblico
 	MLCUsersService *createAnonymousDeviceService = [MLCUsersService createAnonymousDeviceWithDeviceToken:deviceToken handler:^(MLCStatus *status, NSError *error, NSHTTPURLResponse *response) {
 		if (response.statusCode == 200) {
-			MLCUser *user = [MLCServiceManager sharedServiceManager].currentUser;
 			NSLog(@"Registered Device Token: %@", deviceToken);
-			MLCGroupsService *groupsService = [MLCGroupsService listGroups:^(NSArray *collection, NSError *error, NSHTTPURLResponse *response) {
-				NSLog(@"groups: %@ error: %@ response: %@", collection, error, response);
-				for (MLCGroup *group in collection) {
-					if (YES||!group.belongs) {
-						[[MLCGroupsService addUser:user toGroup:group handler:^(MLCStatus *status, NSError *error, NSHTTPURLResponse *response) {
-							if (status && status.type == MLCStatusTypeSuccess) {
-								NSLog(@"Added user: %@ to group: %@", user, group);
-							}
-							else {
-								NSLog(@"Failed to add user: %@ to group: %@ with error: %@", user, group, error);
-							}
-						}] start];
-					}
-				}
-			}];
-			[groupsService start];
 		}
 		else {
 			NSLog(@"Unable to register Device.\nstatus: %@ error: %@ response: %@", status, error, response);

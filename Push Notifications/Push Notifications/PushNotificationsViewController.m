@@ -7,12 +7,19 @@
 //
 
 #import "PushNotificationsViewController.h"
+#import "GroupsViewController.h"
 
 @interface PushNotificationsViewController ()
 @property (weak, nonatomic) IBOutlet UILabel *textLabel;
 @end
 
 @implementation PushNotificationsViewController
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED > __IPHONE_6_1
+- (UIRectEdge)edgesForExtendedLayout {
+	return UIRectEdgeNone;
+}
+#endif
 
 - (void)setPushNotification:(NSDictionary *)pushNotification {
 	if (![_pushNotification isEqual:pushNotification]) {
@@ -44,9 +51,20 @@
 	}
 }
 
+- (void)viewDidLoad {
+	[super viewDidLoad];
+	self.title = @"Push Notifications";
+	self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Groups" style:UIBarButtonItemStyleBordered target:self action:@selector(showGroups)];
+}
+
 - (void)viewWillAppear:(BOOL)animated {
 	[super viewWillAppear:animated];
 	[self updateTextLabel];
+}
+
+- (void)showGroups {
+	GroupsViewController *viewController = [[GroupsViewController alloc] initWithNibName:@"GroupsViewController" bundle:nil];
+	[self.navigationController pushViewController:viewController animated:YES];
 }
 
 @end
